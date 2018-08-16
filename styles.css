@@ -1,6 +1,7 @@
 .game-screen {
-  width: 1440px;
-  height: 960px;
+  position: relative;
+  width: 950px;
+  height: 500px;
   margin: 100 auto;
 }
 
@@ -17,5 +18,8 @@
 .frog {
   width: 50px;
   height: 50px;
-  color: yellow;
+  background: yellow;
+  position: absolute;
+  top: 450px;
+  left: 450px;
 }

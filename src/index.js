@@ -9,8 +9,8 @@ const createState = () => ({
   cars: [],
 
   frog: {
-    x: 11,
-    y: 0,
+    x: 9,
+    y: 9,
     rotate: 0,
     isAlive: true,
     framesSinceDeath: 0,
@@ -21,14 +21,14 @@ const createState = () => ({
 });
 
 const frogUp = (state) => {
-  if (state.frog.y < 10) {
-    state.frog.y += 1;
+  if (state.frog.y > 0) {
+    state.frog.y -= 1;
   }
 };
 
 const frogDown = (state) => {
-  if (state.frog.y > 0) {
-    state.frog.y -= 1;
+  if (state.frog.y < 9) {
+    state.frog.y += 1;
   }
 }
 
@@ -39,7 +39,7 @@ const frogLeft = (state) => {
 };
 
 const frogRight = (state) => {
-  if (state.frog.x < 10) {
+  if (state.frog.x < 18) {
     state.frog.x += 1;
   }
 };
@@ -73,7 +73,14 @@ const handleKeyDown = (event, state) => {
 };
 
 const handleKeyUp = (event, state) => {
-  state.keyIsDown === false;
+  if (
+    event.key === 'ArrowUp' ||
+    event.key === 'ArrowDown' ||
+    event.key === 'ArrowLeft' ||
+    event.key === 'ArrowRight'
+  ) {
+    state.keyIsDown = false;
+  }
 };
 
 const updateCars = (state) => {
@@ -85,22 +92,10 @@ const renderCars = (state, root) => {
 };
 
 const renderFrog = (state, root) => {
-
+  const frogEl = root.querySelector('.frog');
+  frogEl.style.top = `${state.frog.y * 50}px`;
+  frogEl.style.left = `${state.frog.x * 50}px`;
 };
-
-const createStartScreen = () => `
-  <div class="start-screen">
-    <h1>Highway Crossing Frog</h1>
-    <h3>Controls:</h3>
-    <ul>
-      <li>Up: Arrow Up</li>
-      <li>Down: Arrow Down</li>
-      <li>Left: Arrow Left</li>
-      <li>Right: Arrow Right</li>
-      <li>Start Game: Enter</li>
-    </ul>
-  </div>
-`;
 
 const createGameScreen = (state) => `
   <div class="game-screen">
@@ -118,11 +113,15 @@ const createGameScreen = (state) => `
   </div>
 `;
 
+const renderGameScreen = (state, gameScreen, root) => {
+  root.innerHTML = gameScreen;
+};
+
 const startGame = (root) => {
-  const state = createState();
+  state = createState();
 
   const keyDown = event => handleKeyDown(event, state);
-  const keyUp = event => handleKeyDown(event, state);
+  const keyUp = event => handleKeyUp(event, state);
 
   // Handle keys
   window.addEventListener('keydown', keyDown);
@@ -135,7 +134,7 @@ const startGame = (root) => {
   };
 
   const gameScreen = createGameScreen(state);
-  renderGameScreen(state, root);
+  renderGameScreen(state, gameScreen, root);
 
   // Start game loop
   state.gameLoop = setInterval(() => {
@@ -154,17 +153,29 @@ const startGame = (root) => {
   }, 1000/60);
 };
 
+const createStartScreen = () => `
+  <div class="start-screen">
+    <h1>Highway Crossing Frog</h1>
+    <h3>Controls:</h3>
+    <ul>
+      <li>Up: Arrow Up</li>
+      <li>Down: Arrow Down</li>
+      <li>Left: Arrow Left</li>
+      <li>Right: Arrow Right</li>
+      <li>Start Game: Enter</li>
+    </ul>
+  </div>
+`;
+
 const renderStartScreen = (startScreen, root) => {
   root.innerHTML = startScreen;
 
-  const 
+  const onKeyPress = (event) => {
+    window.removeEventListener('keypress', onKeyPress);
+    startGame(root);
+  };
 
-  window.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-      window.removeEventListener('keypress');
-      startGame();
-    }
-  });
+  window.addEventListener('keypress', onKeyPress);
 };
 
 const endGame = (state, game, root) => {
@@ -183,6 +194,7 @@ const endGame = (state, game, root) => {
 };
 
 // Init
+let state;
 const root = document.querySelector('#root');
 const startScreen = createStartScreen();
 renderStartScreen(startScreen, root);
