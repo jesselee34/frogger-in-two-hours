@@ -1,0 +1,21 @@
+.game-screen {
+  width: 1440px;
+  height: 960px;
+  margin: 100 auto;
+}
+
+.road {
+  background: gray;
+  height: 50px;
+}
+
+.grass {
+  background: green;
+  height: 50px;
+}
+
+.frog {
+  width: 50px;
+  height: 50px;
+  color: yellow;
+}
